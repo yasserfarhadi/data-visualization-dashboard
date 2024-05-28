@@ -7,6 +7,7 @@ import {
   CarouselContent,
   CarouselItem,
   Dots,
+  WrapperWithIndex,
 } from '@/components/ui/carousel';
 import {
   BarChart,
@@ -17,7 +18,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Text,
 } from 'recharts';
 
 import { Card, CardContent } from '@/components/ui/card';
@@ -74,18 +74,34 @@ const Daily = () => {
                 {data?.map((item) => (
                   <CarouselItem
                     key={item.time + item.volume}
-                    className="h-full p-0"
+                    className="flex flex-col items-center justify-center h-full p-0"
                   >
+                    <WrapperWithIndex>
+                      {(index) => {
+                        return (
+                          <div>
+                            <h2 className="font-bold text-center ml-7">
+                              Market volume of
+                            </h2>
+                            <h2 className="font-bold text-center ml-7">
+                              {new Date(
+                                data[index].time * 1000
+                              ).toLocaleTimeString()}
+                            </h2>
+                          </div>
+                        );
+                      }}
+                    </WrapperWithIndex>
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart
-                        width={200}
+                        width={300}
                         height={200}
                         data={[item]}
                         margin={{
-                          top: 5,
+                          top: 0,
                           right: 30,
-                          left: 20,
-                          bottom: 5,
+                          left: 10,
+                          bottom: -15,
                         }}
                       >
                         <XAxis
@@ -111,15 +127,6 @@ const Daily = () => {
                           horizontal={true}
                           vertical={false}
                         />
-                        <Text
-                          x={100}
-                          y={20}
-                          className="gooooooooooooooooooooooooooooz"
-                          textAnchor="middle"
-                          dominantBaseline="middle"
-                        >
-                          My Bar Chart Title
-                        </Text>
                       </BarChart>
                     </ResponsiveContainer>
                   </CarouselItem>

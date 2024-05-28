@@ -270,6 +270,14 @@ const Dots = () => {
   );
 };
 
+const WrapperWithIndex: React.FC<{
+  children: (index: number) => React.ReactNode;
+}> = ({ children }) => {
+  const { api } = useCarousel();
+  const { selectedIndex } = useDotButton(api);
+  return <>{children(selectedIndex)}</>;
+};
+
 export {
   type CarouselApi,
   Carousel,
@@ -278,4 +286,5 @@ export {
   CarouselPrevious,
   CarouselNext,
   Dots,
+  WrapperWithIndex,
 };
