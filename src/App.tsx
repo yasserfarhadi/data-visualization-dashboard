@@ -1,7 +1,7 @@
 import Daily from './components/Charts/Daily';
 import Hourly from './components/Charts/Hourly';
 import { ChartsProvider } from './cotext/ChartsProvider';
-import './app.css';
+import './App.css';
 import Filters from './components/Filters';
 
 function App() {
