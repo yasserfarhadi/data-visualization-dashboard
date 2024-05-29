@@ -14,6 +14,7 @@ import {
 } from 'recharts';
 import { getHours } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
+import { useCharts } from '@/cotext/useCharts';
 
 const loading = (
   <div
@@ -21,36 +22,14 @@ const loading = (
     className="relative w-full p-4 rounded animate-pulse md:p-6"
   >
     <div className="flex items-baseline mt-4">
-      <div className="w-full bg-gray-200 rounded-t-lg h-322 dark:bg-gray-700"></div>
-      <div className="w-full bg-gray-200 rounded-t-lg h-36 ms-6 dark:bg-gray-700"></div>
-      <div className="w-full bg-gray-200 rounded-t-lg h-28 ms-6 dark:bg-gray-700"></div>
-      <div className="w-full h-40 bg-gray-200 rounded-t-lg ms-6 dark:bg-gray-700"></div>
-      <div className="w-full bg-gray-200 rounded-t-lg h-44 ms-6 dark:bg-gray-700"></div>
-      <div className="w-full h-56 bg-gray-200 rounded-t-lg ms-6 dark:bg-gray-700"></div>
-      <div className="w-full h-20 bg-gray-200 rounded-t-lg ms-6 dark:bg-gray-700"></div>
-      <div className="w-full h-40 bg-gray-200 rounded-t-lg ms-6 dark:bg-gray-700"></div>
-      <div className="w-full h-56 bg-gray-200 rounded-t-lg ms-6 dark:bg-gray-700"></div>
-      <div className="w-full bg-gray-200 rounded-t-lg h-28 ms-6 dark:bg-gray-700"></div>
-      <div className="w-full bg-gray-200 rounded-t-lg h-322 dark:bg-gray-700"></div>
-      <div className="w-full bg-gray-200 rounded-t-lg h-36 ms-6 dark:bg-gray-700"></div>
-      <div className="w-full bg-gray-200 rounded-t-lg h-28 ms-6 dark:bg-gray-700"></div>
-      <div className="w-full h-40 bg-gray-200 rounded-t-lg ms-6 dark:bg-gray-700"></div>
-      <div className="w-full bg-gray-200 rounded-t-lg h-44 ms-6 dark:bg-gray-700"></div>
-      <div className="w-full h-56 bg-gray-200 rounded-t-lg ms-6 dark:bg-gray-700"></div>
-      <div className="w-full h-20 bg-gray-200 rounded-t-lg ms-6 dark:bg-gray-700"></div>
-      <div className="w-full h-40 bg-gray-200 rounded-t-lg ms-6 dark:bg-gray-700"></div>
-      <div className="w-full h-56 bg-gray-200 rounded-t-lg ms-6 dark:bg-gray-700"></div>
-      <div className="w-full bg-gray-200 rounded-t-lg h-28 ms-6 dark:bg-gray-700"></div>
-      <div className="w-full bg-gray-200 rounded-t-lg h-322 dark:bg-gray-700"></div>
-      <div className="w-full bg-gray-200 rounded-t-lg h-36 ms-6 dark:bg-gray-700"></div>
-      <div className="w-full bg-gray-200 rounded-t-lg h-28 ms-6 dark:bg-gray-700"></div>
-      <div className="w-full h-40 bg-gray-200 rounded-t-lg ms-6 dark:bg-gray-700"></div>
-      <div className="w-full bg-gray-200 rounded-t-lg h-44 ms-6 dark:bg-gray-700"></div>
-      <div className="w-full h-56 bg-gray-200 rounded-t-lg ms-6 dark:bg-gray-700"></div>
-      <div className="w-full h-20 bg-gray-200 rounded-t-lg ms-6 dark:bg-gray-700"></div>
-      <div className="w-full h-40 bg-gray-200 rounded-t-lg ms-6 dark:bg-gray-700"></div>
-      <div className="w-full h-56 bg-gray-200 rounded-t-lg ms-6 dark:bg-gray-700"></div>
-      <div className="w-full bg-gray-200 rounded-t-lg h-28 ms-6 dark:bg-gray-700"></div>
+      {Array.from({ length: 30 }).map((_, i) => (
+        <div
+          key={i}
+          className={`w-full bg-gray-200 rounded-t-lg h-${
+            [36, 56, 40, 44, 56, 20, 40][Math.floor(Math.random() * 7)]
+          } ms-6 dark:bg-gray-700`}
+        ></div>
+      ))}
     </div>
     <div className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] z-50 text-black ">
       Loading Data...
@@ -62,7 +41,7 @@ const Hourly = () => {
   const { data, isLoading } = useQuery({
     queryKey: ['hourly'],
     queryFn: async () => {
-      // await new Promise((r) => setTimeout(r, 2000));
+      await new Promise((r) => setTimeout(r, 2000));
       return axios
         .get<HourlyModel>(
           'https://min-api.cryptocompare.com/data/v2/histohour?fsym=BTC&tsym=USD&limit=10'
@@ -77,6 +56,7 @@ const Hourly = () => {
         );
     },
   });
+  const { chartState } = useCharts();
   return (
     <div className="w-full h-72">
       <Card>
@@ -110,27 +90,35 @@ const Hourly = () => {
                         // ticks={[]}
                       />
                       <Tooltip />
-                      <Bar
-                        dataKey="high"
-                        fill="#11B89B"
-                        activeBar={<Rectangle fill="#11B89B" stroke="blue" />}
-                        barSize={10}
-                        radius={3}
-                      />
-                      <Bar
-                        dataKey="average"
-                        fill="#FFD966"
-                        activeBar={<Rectangle fill="#FFD966" stroke="blue" />}
-                        barSize={10}
-                        radius={3}
-                      />
-                      <Bar
-                        dataKey="low"
-                        fill="#F24B4B"
-                        activeBar={<Rectangle fill="#F24B4B" stroke="purple" />}
-                        barSize={10}
-                        radius={3}
-                      />
+                      {chartState.higher && (
+                        <Bar
+                          dataKey="high"
+                          fill="#11B89B"
+                          activeBar={<Rectangle fill="#11B89B" stroke="blue" />}
+                          barSize={10}
+                          radius={3}
+                        />
+                      )}
+                      {chartState.average && (
+                        <Bar
+                          dataKey="average"
+                          fill="#FFD966"
+                          activeBar={<Rectangle fill="#FFD966" stroke="blue" />}
+                          barSize={10}
+                          radius={3}
+                        />
+                      )}
+                      {chartState.lower && (
+                        <Bar
+                          dataKey="low"
+                          fill="#F24B4B"
+                          activeBar={
+                            <Rectangle fill="#F24B4B" stroke="purple" />
+                          }
+                          barSize={10}
+                          radius={3}
+                        />
+                      )}
                       <CartesianGrid
                         strokeDasharray="3 3"
                         horizontal={true}

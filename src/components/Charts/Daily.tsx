@@ -40,7 +40,7 @@ const Daily = () => {
   const { data, isLoading } = useQuery({
     queryKey: ['Daily'],
     queryFn: async () => {
-      // await new Promise((r) => setTimeout(r, 2000));
+      await new Promise((r) => setTimeout(r, 2000));
       return axios
         .get<DailyModel>(
           'https://min-api.cryptocompare.com/data/exchange/histohour?tsym=BTC&limit=10'
