@@ -1,3 +1,4 @@
+import React from 'react';
 import { useCharts } from '@/cotext/useCharts';
 import { Card, CardContent } from '../ui/card';
 import { Checkbox } from '../ui/checkbox';
@@ -8,15 +9,17 @@ import { Datum } from '@/types/hourlyModel';
 const Filters = () => {
   const { chartState, changeHandler } = useCharts();
   const queryClient = useQueryClient();
-  const hourlyData: Datum[] | undefined = queryClient.getQueryData(['hourly']);
-  // const mutatedData = React.useMemo(() => {
-  //   return {
-  //     timeRange: {
-  //       from: ,
-  //       to: ,
-  //     }
-  //   }
-  // }, [hourlyData])
+  const [data, setData] = React.useState<Datum[]>();
+  React.useEffect(() => {
+    const unsubscribe = queryClient.getQueryCache().subscribe(() => {
+      const query: Datum[] | undefined = queryClient.getQueryData(['hourly']);
+      setData(query);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [queryClient]);
 
   return (
     <Card>
@@ -68,28 +71,26 @@ const Filters = () => {
               </label>
             </div>
           </div>
-          {hourlyData && (
+          {data && (
             <div className="flex justify-around flex-grow font-semibold">
               <div className="text-[#11B89B]">
                 <p>
-                  Maximum Range:{' '}
-                  {Math.min(...hourlyData.map((item) => item.high))} to{' '}
-                  {Math.max(...hourlyData.map((item) => item.high))}
+                  Maximum Range: {Math.min(...data.map((item) => item.high))} to{' '}
+                  {Math.max(...data.map((item) => item.high))}
                 </p>
                 <p>
-                  <b>{getHours(hourlyData[0].time)}</b> to
-                  <b>{getHours(hourlyData[hourlyData.length - 1].time)}</b>
+                  <b>{getHours(data[0].time)}</b> to
+                  <b>{getHours(data[data.length - 1].time)}</b>
                 </p>
               </div>
               <div className="text-[#F24B4B]">
                 <p>
-                  Minimum Range:{' '}
-                  {Math.min(...hourlyData.map((item) => item.low))} to{' '}
-                  {Math.max(...hourlyData.map((item) => item.low))}
+                  Minimum Range: {Math.min(...data.map((item) => item.low))} to{' '}
+                  {Math.max(...data.map((item) => item.low))}
                 </p>
                 <p>
-                  <b>{getHours(hourlyData[0].time)}</b> to
-                  <b>{getHours(hourlyData[hourlyData.length - 1].time)}</b>
+                  <b>{getHours(data[0].time)}</b> to
+                  <b>{getHours(data[data.length - 1].time)}</b>
                 </p>
               </div>
             </div>
